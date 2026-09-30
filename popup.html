@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 13px/1.4 Segoe UI, system-ui, sans-serif; width: 300px; margin: 0; padding: 14px; background: #1e1f22; color: #e8e8e8; }
+  h1 { font-size: 15px; margin: 0 0 10px; }
+  label.row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+  input[type=url] { width: 100%; box-sizing: border-box; margin-top: 4px; padding: 6px; border-radius: 4px; border: 1px solid #555; background: #2b2d31; color: inherit; }
+  .hint { color: #a0a0a0; font-size: 11px; margin: 4px 0 0; }
+  button { margin-top: 12px; padding: 7px 12px; border: 0; border-radius: 4px; background: #4f7cff; color: #fff; cursor: pointer; font-weight: 600; }
+  #status { margin-top: 8px; font-size: 12px; min-height: 16px; }
+  .ok { color: #7ee2a8; } .err { color: #ff8a8a; }
+</style>
+</head>
+<body>
+  <h1>Ticket accepted alerts</h1>
+  <label class="row"><input type="checkbox" id="sound"> Chime</label>
+  <label class="row"><input type="checkbox" id="teams"> Send Teams message</label>
+  <input type="url" id="teamsUrl" placeholder="Paste Teams Workflow webhook URL">
+  <p class="hint">The ticket glows until you click it. Message format: “Student to Rep at Table”.</p>
+  <button id="test" type="button">Send test alert</button>
+  <div id="status"></div>
+  <p class="hint" id="last"></p>
+  <script src="popup.js"></script>
+</body>
+</html>

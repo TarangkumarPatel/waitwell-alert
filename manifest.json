@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Waitwell Ticket Alerts",
+  "version": "1.1",
+  "description": "Steady glow, chime and optional Teams message when a Waitwell ticket is accepted.",
+  "permissions": ["storage", "offscreen"],
+  "host_permissions": [
+    "https://*.logic.azure.com/*",
+    "https://*.powerplatform.com/*",
+    "https://*.powerautomate.com/*",
+    "https://*.webhook.office.com/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Waitwell ticket alerts" },
+  "icons": { "128": "icon.png" },
+  "content_scripts": [
+    {
+      "matches": ["https://app.waitwell.ca/*"],
+      "css": ["styles.css"],
+      "js": ["notifier.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
