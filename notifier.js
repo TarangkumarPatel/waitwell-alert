@@ -121,24 +121,74 @@
         saveState();
     };
 
-    // Click a glowing card once you've taken the student to the desk.
-    document.addEventListener('click', (event) => {
-        const card = event.target.closest && event.target.closest('.waitwell-accepted-glow');
-        if (!card) return;
+    // Click or tap a glowing card once you've taken the student to the desk.
+    // That press only clears the glow: we swallow it so Waitwell doesn't also open the
+    // ticket actions (Details / Assign / Transfer...). The glow is cleared when the
+    // press is released (pointerup), which fires for mouse, touchscreen and pen alike.
+    // Once the glow is gone, the next click or tap on the card works normally.
+    const glowingCardFrom = (event) => event.target.closest && event.target.closest('.waitwell-accepted-glow');
+    const swallow = (event) => {
+        if (event.cancelable) event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+    };
+
+    let pressedCard = null;      // glowing card the current press started on
+    let justCleared = null;      // { card, until }: swallow the click that follows the release
+
+    const clearGlow = (card) => {
         glowing.delete(card.dataset.waitwellKey);
         card.classList.remove('waitwell-accepted-glow');
         saveState();
-    }, true);
+    };
+
+    const inJustCleared = (event) => justCleared && Date.now() < justCleared.until &&
+        justCleared.card.contains(event.target);
+
+    window.addEventListener('pointerdown', (event) => {
+        const card = glowingCardFrom(event);
+        pressedCard = card || null;
+        if (card) swallow(event);
+    }, { capture: true, passive: false });
+
+    window.addEventListener('pointerup', (event) => {
+        const card = glowingCardFrom(event);
+        if (!card) return;
+        swallow(event);
+        if (card === pressedCard) {
+            clearGlow(card);
+            justCleared = { card, until: Date.now() + 800 };
+        }
+        pressedCard = null;
+    }, { capture: true, passive: false });
+
+    window.addEventListener('pointercancel', () => { pressedCard = null; }, true);
+
+    // Legacy mouse/touch events and the click itself: block them while the card is
+    // glowing, and for a moment after the release that cleared it.
+    ['mousedown', 'mouseup', 'touchstart', 'touchend', 'click', 'dblclick', 'contextmenu'].forEach((type) => {
+        window.addEventListener(type, (event) => {
+            if (glowingCardFrom(event) || inJustCleared(event)) swallow(event);
+        }, { capture: true, passive: false });
+    });
 
     let pending = false;
     const scheduleScan = () => {
         if (pending) return;
         pending = true;
-        setTimeout(() => { pending = false; scan(); }, 400);
+        // Hidden tabs get their timers throttled by Chrome, so scan straight away there.
+        if (document.hidden) {
+            queueMicrotask(() => { pending = false; scan(); });
+        } else {
+            setTimeout(() => { pending = false; scan(); }, 400);
+        }
     };
 
     new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true, characterData: true });
     setInterval(scan, 2000);
     // Give the dashboard a moment to render before taking the baseline.
     setTimeout(scan, 1500);
+
+    // Ask Chrome not to put this tab to sleep (Memory Saver), or no alerts would fire.
+    try { chrome.runtime.sendMessage({ type: 'keep-tab-awake' }); } catch (error) { /* ignore */ }
 })();
