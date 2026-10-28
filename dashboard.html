@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1 id="title">Service Hub</h1>
+      <p class="status"><span class="dot" id="statusDot"></span><span id="statusText">Connecting to Waitwell…</span></p>
+    </div>
+    <div class="top-right">
+      <button type="button" class="toggle" id="popupToggle" aria-pressed="true"></button>
+      <button type="button" class="toggle" id="alertsToggle" aria-pressed="true"></button>
+      <div class="clock">
+        <div id="time">--:--</div>
+        <div id="date"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="board">
+    <section class="queues" id="queues" aria-label="Waiting lists">
+      <div class="queue-panel" id="insidePanel">
+        <div class="queue-head">
+          <h2><span class="hourglass" aria-hidden="true">⌛</span> <span id="insideLabel">Waiting Inside</span></h2>
+        </div>
+        <div class="tickets" id="insideList"></div>
+      </div>
+      <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Drag to resize the waiting lists" title="Drag to resize" tabindex="0"><span></span></div>
+      <div class="queue-panel outside" id="outsidePanel">
+        <div class="queue-head">
+          <h2><span class="hourglass" aria-hidden="true">⌛</span> <span id="outsideLabel">Waiting Outside</span></h2>
+          <button type="button" class="move-next" id="moveNext" title="Move the top ticket inside">↑ Move next inside</button>
+        </div>
+        <div class="tickets" id="outsideList"></div>
+      </div>
+    </section>
+
+    <section class="map-panel" id="mapPanel" aria-label="Floor map">
+      <div class="map-head">
+        <h2>Floor map</h2>
+        <p class="legend" id="legend"></p>
+      </div>
+
+      <!-- Edit bar: only while unlocked -->
+      <div class="admin-bar" id="adminBar" hidden>
+        <div class="admin-row">
+          <span class="admin-title">Editing</span>
+          <div class="swatches" id="swatches"></div>
+          <button type="button" class="tool" id="addColour">+ Colour</button>
+          <button type="button" class="tool" id="addTable">+ Table</button>
+          <label class="area-default" title="Default colour for all areas (paint an area to give it its own colour)">Areas <input type="color" id="areaPicker" aria-label="Default area colour"></label>
+          <span class="admin-spacer"></span>
+          <button type="button" class="tool" id="resetLayout">Reset layout</button>
+          <button type="button" class="tool" id="resetColours">Reset colours</button>
+          <button type="button" class="tool done" id="doneBtn">✓ Done</button>
+        </div>
+        <div class="admin-row edit-row" id="editRow" hidden>
+          <input type="color" id="editPicker" aria-label="Colour">
+          <input type="text" id="editHex" maxlength="7" aria-label="Hex code">
+          <input type="text" id="editLabel" maxlength="30" aria-label="Label" placeholder="Label">
+          <input type="text" id="editMatch" maxlength="120" aria-label="Queue words" placeholder="Queue words, e.g. immigration">
+          <button type="button" class="tool" id="deleteColour">Delete colour</button>
+        </div>
+        <div class="admin-row edit-row" id="tableRow" hidden>
+          <span class="row-label">Table:</span>
+          <input type="text" id="tableLabel" maxlength="30" aria-label="Label on the map" placeholder="Label on the map">
+          <input type="text" id="tableName" maxlength="60" aria-label="Table name in Waitwell" placeholder="Name in Waitwell, e.g. Short Table 5">
+          <button type="button" class="tool" id="deleteTable">Delete table</button>
+        </div>
+        <p class="admin-hint">Drag a table to move it (its blue area follows), or drag an area to move all its tables. Black corner square = resize. Click a table to rename or delete it. Pick a colour first to paint tables or areas instead ("No colour" puts an area back to the default). Click a desk in Other desks to add it to the map.</p>
+      </div>
+
+      <div class="map-wrap" id="mapWrap"><svg id="map" role="img" aria-label="Service Hub floor map"></svg></div>
+
+      <div class="alerts" id="alerts">
+        <p class="alerts-title">Recent alerts</p>
+        <ul id="alertsList"></ul>
+      </div>
+
+      <button type="button" class="lock" id="lockBtn" title="Unlock to edit colours and layout" aria-label="Unlock to edit">🔒</button>
+    </section>
+
+    <div class="offline" id="offline" hidden>
+      <div class="offline-card">
+        <p class="offline-big">Waiting for Waitwell…</p>
+        <p class="offline-small">Keep Waitwell open in a Chrome tab on this computer. The dashboard updates by itself.</p>
+        <button type="button" class="ghost" id="demoBtn">Preview with sample data</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <div class="call" id="call" hidden>
+    <div class="call-card">
+      <p class="call-label">It's your turn</p>
+      <p class="call-name" id="callName"></p>
+      <p class="call-go">Please go to</p>
+      <p class="call-table" id="callTable"></p>
+      <div class="call-bar"><div class="call-bar-fill" id="callBar"></div></div>
+      <p class="call-hint">Click anywhere to close</p>
+    </div>
+  </div>
+
+  <script src="floor-map.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

@@ -11,17 +11,39 @@
   button { margin-top: 12px; padding: 7px 12px; border: 0; border-radius: 4px; background: #4f7cff; color: #fff; cursor: pointer; font-weight: 600; }
   #status { margin-top: 8px; font-size: 12px; min-height: 16px; }
   .ok { color: #7ee2a8; } .err { color: #ff8a8a; }
+  hr { border: 0; border-top: 1px solid #3a3c42; margin: 14px 0 10px; }
+  h2 { font-size: 14px; margin: 0 0 6px; }
+  .field { display: block; margin: 8px 0; }
+  .field span { display: block; color: #c8c8c8; margin-bottom: 3px; }
+  .field input, .field select { width: 100%; box-sizing: border-box; padding: 6px; border-radius: 4px; border: 1px solid #555; background: #2b2d31; color: inherit; font: inherit; }
+  button.secondary { background: #f4b33f; color: #1d1404; width: 100%; margin-top: 4px; }
 </style>
 </head>
 <body>
   <h1>Ticket accepted alerts</h1>
+  <label class="row"><input type="checkbox" id="glow"> Glow on the ticket</label>
   <label class="row"><input type="checkbox" id="sound"> Chime</label>
+  <label class="row"><input type="checkbox" id="desktop"> Desktop notification</label>
   <label class="row"><input type="checkbox" id="teams"> Send Teams message</label>
   <input type="url" id="teamsUrl" placeholder="Paste Teams Workflow webhook URL">
   <p class="hint">The ticket glows until you click it. Message format: “Student to Rep at Table”.</p>
   <button id="test" type="button">Send test alert</button>
   <div id="status"></div>
   <p class="hint" id="last"></p>
+
+  <hr>
+  <h2>Dashboard</h2>
+  <button id="openDashboard" type="button" class="secondary">Open dashboard</button>
+  <p class="hint">Waiting lists and a floor map of who's at which table, live from Waitwell. Keep Waitwell open in a tab on this computer. Nothing leaves this laptop.</p>
+  <label class="field"><span>Title</span><input type="text" id="dashTitle" maxlength="40"></label>
+  <label class="field"><span>Student names on the dashboard</span>
+    <select id="dashNames">
+      <option value="full">Full name (Tarang Patel)</option>
+      <option value="short">First name + last initial (Tarang P.)</option>
+      <option value="first">First name only (Tarang)</option>
+    </select>
+  </label>
+  <label class="row"><input type="checkbox" id="dashPopup"> "It's your turn" pop-up on the dashboard</label>
   <script src="popup.js"></script>
 </body>
 </html>
