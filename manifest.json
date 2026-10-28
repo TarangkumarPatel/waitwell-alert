@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Waitwell Ticket Alerts",
-  "version": "1.4",
-  "description": "Steady glow, chime and optional Teams message when a Waitwell ticket is accepted.",
+  "version": "2.4",
+  "description": "Glow, chime, desktop notification, Teams message and a live floor-map dashboard for Waitwell tickets.",
   "permissions": [
     "storage",
-    "offscreen"
+    "offscreen",
+    "notifications"
   ],
   "host_permissions": [
     "https://*.logic.azure.com/*",
